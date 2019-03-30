@@ -24,3 +24,35 @@ img {
   margin: 20px 0;
   max-width: 200px;
 }
+
+.main-container {
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  margin: 1rem auto;
+}
+
+.beats {
+  display: flex;
+  justify-content: space-evenly;
+  width: 30rem;
+}
+
+.beats div {
+  align-items: center;
+  background: lightgray;
+  border-radius: 0.5rem;
+  display: flex;
+  font-size: 1.5rem;
+  font-weight: bold;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.beats div.active {
+  background: lightskyblue;
+  color: white;
+}

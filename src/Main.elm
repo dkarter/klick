@@ -3,7 +3,7 @@ module Main exposing (Model, Msg(..), init, main, update, view)
 import AudioPorts
 import Browser
 import Html exposing (Html, button, div, h1, img, input, text)
-import Html.Attributes exposing (max, min, src, type_, value)
+import Html.Attributes exposing (class, classList, max, min, src, type_, value)
 import Html.Events exposing (on, onClick)
 import Html.Events.Extra exposing (targetValueIntParse)
 import Json.Decode as Json
@@ -24,14 +24,14 @@ subDivision =
     1.0
 
 
+beatCount : Int
+beatCount =
+    7
+
+
 schedulerInterval : Float
 schedulerInterval =
     25
-
-
-freqValue : Float
-freqValue =
-    440.0
 
 
 type alias Flags =
@@ -40,7 +40,8 @@ type alias Flags =
 
 type alias Model =
     { bpm : Int
-    , tickCount : Int
+    , currentAudioClockTime : Float
+    , currentBeat : Int
     , nextNoteTime : Float
     , started : Bool
     }
@@ -49,7 +50,8 @@ type alias Model =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { bpm = 120
-      , tickCount = 0
+      , currentAudioClockTime = flags.currentTime
+      , currentBeat = 0
       , nextNoteTime = flags.currentTime
       , started = False
       }
@@ -79,6 +81,13 @@ update msg model =
                 nextNoteTime =
                     model.nextNoteTime + (subDivision * (60.0 / toFloat model.bpm))
 
+                freqValue =
+                    if currentBeat == 1 then
+                        440.0
+
+                    else
+                        380.0
+
                 note =
                     { time = nextNoteTime
                     , freqValue = freqValue
@@ -87,13 +96,26 @@ update msg model =
 
                 shouldScheduleNextNote =
                     nextNoteTime < (currentTime + noteDuration)
+
+                currentBeat =
+                    if model.currentBeat == beatCount then
+                        1
+
+                    else
+                        model.currentBeat + 1
             in
             case shouldScheduleNextNote of
                 True ->
-                    ( { model | nextNoteTime = nextNoteTime }, AudioPorts.scheduleNote note )
+                    ( { model
+                        | nextNoteTime = nextNoteTime
+                        , currentBeat = currentBeat
+                        , currentAudioClockTime = currentTime
+                      }
+                    , AudioPorts.scheduleNote note
+                    )
 
                 False ->
-                    ( model, Cmd.none )
+                    ( { model | currentAudioClockTime = currentTime }, Cmd.none )
 
         ToggleMetronome ->
             let
@@ -105,7 +127,13 @@ update msg model =
                         False ->
                             AudioPorts.startAudioClock ()
             in
-            ( { model | started = not model.started }, cmd )
+            ( { model
+                | started = not model.started
+                , currentBeat = 0
+                , nextNoteTime = model.currentAudioClockTime
+              }
+            , cmd
+            )
 
         _ ->
             ( model, Cmd.none )
@@ -146,19 +174,37 @@ renderToggleButton model =
     button [ onClick ToggleMetronome ] [ text buttonText ]
 
 
+renderBeats : Model -> Html Msg
+renderBeats model =
+    let
+        renderBeat beatNum =
+            div [ classList [ ( "active", beatNum == model.currentBeat ) ] ]
+                [ text (String.fromInt beatNum)
+                ]
+
+        beats =
+            List.range 1 beatCount
+                |> List.map renderBeat
+    in
+    div [ class "beats" ] beats
+
+
 view : Model -> Html Msg
 view model =
-    div []
-        [ text (String.fromInt model.bpm)
-        , input
-            [ type_ "range"
-            , min "10"
-            , max "400"
-            , value (String.fromInt model.bpm)
-            , onInput ChangeBPM
+    div [ class "main-container" ]
+        [ div [ class "controls" ]
+            [ text (String.fromInt model.bpm)
+            , input
+                [ type_ "range"
+                , min "10"
+                , max "400"
+                , value (String.fromInt model.bpm)
+                , onInput ChangeBPM
+                ]
+                []
+            , renderToggleButton model
             ]
-            []
-        , renderToggleButton model
+        , renderBeats model
         ]
 
 

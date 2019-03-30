@@ -17,6 +17,7 @@ const app = Elm.Main.init({
 let timer = null;
 
 app.ports.startAudioClock.subscribe(() => {
+  ctx.resume();
   if (timer == null) {
     const readCurrentTime = () => {
       app.ports.audioClockUpdate.send(ctx.currentTime);
@@ -31,8 +32,10 @@ app.ports.stopAudioClock.subscribe(() => {
   if (timer) {
     cancelAnimationFrame(timer);
     timer = null;
+    ctx.suspend();
   }
 });
+
 app.ports.scheduleNote.subscribe(scheduleNote);
 
 function scheduleNote({ time, freqValue, noteDuration }) {
