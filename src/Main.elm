@@ -8,7 +8,6 @@ import Html.Events exposing (on, onClick)
 import Html.Events.Extra exposing (targetValueIntParse)
 import Json.Decode as Json
 import Maybe exposing (withDefault)
-import Time
 
 
 
@@ -64,7 +63,6 @@ init flags =
 
 type Msg
     = ChangeBPM Int
-    | Tick Time.Posix
     | AudioClockUpdated Float
     | ToggleMetronome
     | NoOp
@@ -121,7 +119,6 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     if model.started then
         AudioPorts.audioClockUpdate AudioClockUpdated
-        -- Time.every schedulerInterval Tick
 
     else
         Sub.none
