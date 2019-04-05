@@ -1,0 +1,17 @@
+{
+  "name": "klick",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:dkarter/klick.git",
+  "author": "Dorian Karter <dkarter@users.noreply.github.com>",
+  "license": "GPL3",
+  "private": true,
+  "dependencies": {
+    "node-sass-chokidar": "^1.3.4"
+  },
+  "scripts": {
+    "build:css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "start": "elm-app start",
+    "watch:css": "yarn build:css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive"
+  }
+}
