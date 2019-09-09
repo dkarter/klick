@@ -2,12 +2,9 @@ module Main exposing (Model, Msg(..), init, main, update, view)
 
 import AudioPorts
 import Browser
-import Html exposing (Html, button, div, h1, img, input, text)
-import Html.Attributes exposing (class, classList, max, min, src, type_, value)
-import Html.Events exposing (on, onClick)
-import Html.Events.Extra exposing (targetValueIntParse)
-import Json.Decode as Json
-import Maybe exposing (withDefault)
+import Html exposing (Html, button, div, header, img, span, text)
+import Html.Attributes exposing (alt, class, classList, src)
+import Html.Events exposing (onClick)
 
 
 
@@ -27,11 +24,6 @@ subDivision =
 beatCount : Int
 beatCount =
     7
-
-
-schedulerInterval : Float
-schedulerInterval =
-    25
 
 
 type alias Flags =
@@ -65,6 +57,8 @@ init flags =
 
 type Msg
     = ChangeBPM Int
+    | IncreaseBPM
+    | DecreaseBPM
     | AudioClockUpdated Float
     | ToggleMetronome
     | NoOp
@@ -73,6 +67,12 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        IncreaseBPM ->
+            ( { model | bpm = model.bpm + 1 }, Cmd.none )
+
+        DecreaseBPM ->
+            ( { model | bpm = model.bpm - 1 }, Cmd.none )
+
         ChangeBPM bpm ->
             ( { model | bpm = bpm }, Cmd.none )
 
@@ -104,28 +104,26 @@ update msg model =
                     else
                         model.currentBeat + 1
             in
-            case shouldScheduleNextNote of
-                True ->
-                    ( { model
-                        | nextNoteTime = nextNoteTime
-                        , currentBeat = currentBeat
-                        , currentAudioClockTime = currentTime
-                      }
-                    , AudioPorts.scheduleNote note
-                    )
+            if shouldScheduleNextNote then
+                ( { model
+                    | nextNoteTime = nextNoteTime
+                    , currentBeat = currentBeat
+                    , currentAudioClockTime = currentTime
+                  }
+                , AudioPorts.scheduleNote note
+                )
 
-                False ->
-                    ( { model | currentAudioClockTime = currentTime }, Cmd.none )
+            else
+                ( { model | currentAudioClockTime = currentTime }, Cmd.none )
 
         ToggleMetronome ->
             let
                 cmd =
-                    case model.started of
-                        True ->
-                            AudioPorts.stopAudioClock ()
+                    if model.started then
+                        AudioPorts.stopAudioClock ()
 
-                        False ->
-                            AudioPorts.startAudioClock ()
+                    else
+                        AudioPorts.startAudioClock ()
             in
             ( { model
                 | started = not model.started
@@ -156,22 +154,19 @@ subscriptions model =
 ---- VIEW ----
 
 
-onInput onChangeAction =
-    on "input" <| Json.map onChangeAction targetValueIntParse
-
-
 renderToggleButton : Model -> Html Msg
 renderToggleButton model =
     let
         buttonText =
-            case model.started of
-                True ->
-                    "Stop"
+            if model.started then
+                "Stop"
 
-                False ->
-                    "Start"
+            else
+                "Start"
     in
-    button [ onClick ToggleMetronome ] [ text buttonText ]
+    button [ onClick ToggleMetronome, alt buttonText, class "play-stop-button" ]
+        [ img [ src "play-button.svg" ] []
+        ]
 
 
 renderBeats : Model -> Html Msg
@@ -189,22 +184,37 @@ renderBeats model =
     div [ class "beats" ] beats
 
 
+renderBPM : Model -> Html Msg
+renderBPM model =
+    div [ class "bpm" ]
+        [ span [] [ text (String.fromInt model.bpm) ]
+        , span [] [ text "bpm" ]
+        ]
+
+
+renderBPMControls : Model -> Html Msg
+renderBPMControls model =
+    div [ class "bpm-controls" ]
+        [ button [ onClick DecreaseBPM ] [ text "-" ]
+        , renderBPM model
+        , button [ onClick IncreaseBPM ] [ text "+" ]
+        ]
+
+
+renderControls : Model -> Html Msg
+renderControls model =
+    div [ class "controls-container" ]
+        [ renderBPMControls model
+        , renderToggleButton model
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div [ class "main-container" ]
-        [ div [ class "controls" ]
-            [ text (String.fromInt model.bpm)
-            , input
-                [ type_ "range"
-                , min "10"
-                , max "400"
-                , value (String.fromInt model.bpm)
-                , onInput ChangeBPM
-                ]
-                []
-            , renderToggleButton model
-            ]
+        [ header [] [ img [ src "logo.svg" ] [] ]
         , renderBeats model
+        , renderControls model
         ]
 
 

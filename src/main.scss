@@ -1,3 +1,7 @@
+$button-background: #fff;
+$button-color: #4a4a4a;
+$highlight-color: #6b69ff;
+
 /*
   elm-hot creates an additional div wrapper around the app to make HMR possible.
   This could break styling in development mode if you are using Elm UI.
@@ -10,40 +14,80 @@
 }
 
 body {
+  background: #13181b;
   font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande',
     'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
   margin: 0;
   text-align: center;
-  color: #293c4b;
-}
-
-h1 {
-  font-size: 30px;
-}
-
-img {
-  margin: 20px 0;
-  max-width: 200px;
+  color: #fff;
+  margin: 0 auto;
 }
 
 .main-container {
-  width: 100%;
+  padding: 1.5rem;
+  border: 1px solid white;
+
+  > header {
+    margin-bottom: 1.5rem;
+  }
 }
 
-.controls {
-  display: flex;
+.controls-container {
   margin: 1rem auto;
+
+  .play-stop-button {
+    background: none;
+    border: none;
+  }
+
+  .bpm-controls {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    button {
+      $size: 3rem;
+      align-items: center;
+      background: $button-background;
+      border-radius: 50%;
+      border: none;
+      color: $button-color;
+      display: flex;
+      font-size: 1.8rem;
+      font-weight: bold;
+      height: $size;
+      justify-content: center;
+      padding-bottom: 0.25rem;
+      width: $size;
+    }
+
+    .bpm {
+      color: $highlight-color;
+      margin: 0 2rem;
+
+      span:first-child {
+        font-size: 66pt;
+      }
+
+      span + span {
+        font-size: 20pt;
+      }
+    }
+  }
 }
 
 .beats {
   display: flex;
   justify-content: space-evenly;
-  width: 30rem;
+  flex-wrap: wrap;
+  max-width: 50rem;
+  margin: 0 auto;
 
   div {
     align-items: center;
-    background: lightgray;
-    border-radius: 0.5rem;
+    background: $highlight-color;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5);
     display: flex;
     font-size: 1.5rem;
     font-weight: bold;
@@ -52,8 +96,8 @@ img {
     width: 3rem;
 
     &.active {
-      background: lightskyblue;
-      color: white;
+      background: #8189ea;
+      box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.39);
     }
   }
 }

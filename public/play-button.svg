@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="123px" height="123px" viewBox="0 0 123 123" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Fill 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M160.5,338 C128.785421,338 103,363.785421 103,395.5 C103,427.214579 128.785421,453 160.5,453 C192.214579,453 218,427.214579 218,395.5 C218,363.785421 192.214579,338 160.5,338 Z M179.462877,398.395904 L152.430189,416.398019 C150.139373,417.969429 147,416.275331 147,413.500672 L147,377.500065 C147,374.720621 150.139373,373.031307 152.430189,374.602717 L179.458051,392.600001 C181.513196,393.926059 181.513196,397.068758 179.462769,398.394817 L179.462877,398.395904 Z" id="path-1"></path>
+        <filter x="-6.1%" y="-4.3%" width="112.2%" height="112.2%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Mobile-Portrait" transform="translate(-99.000000, -336.000000)">
+            <g id="Fill-1">
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>
